@@ -1,0 +1,8 @@
+Website = "https://github.com"
+
+[Details]
+Icon = "icon.png"
+Name = "Compear"
+ID = "com.berger23.compear"
+Version = "0.0.1"
+Build = 1

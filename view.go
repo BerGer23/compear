@@ -23,14 +23,23 @@ var separatorAutodetectLeft *widget.Check
 var separatorAutodetectRight *widget.Check
 var ignoreTimestamps *widget.Check
 var trim *widget.Check
-var result analysis
+var result Analysis
 
 func analyze() {
 	if initialized {
 		result = compareTokens(leftEntry.Text, rightEntry.Text, separatorLeft.Selected, separatorRight.Selected, trim.Checked)
-		resultListLeft.Resize(fyne.Size{Width: 200, Height: 300})
-		resultListRight.Resize(fyne.Size{Width: 200, Height: 300})
+		//TODO: dynamic
+		resultListLeft.Resize(fyne.Size{Width: 500, Height: 300})
+		resultListRight.Resize(fyne.Size{Width: 500, Height: 300})
 	}
+}
+
+func processResult(result Token) string {
+	toPrint := result.Content
+	if len(result.Content) == 0 {
+		toPrint = "<empty>"
+	}
+	return toPrint + " (" + strconv.Itoa(result.Index) + ")"
 }
 
 func setupView() {
@@ -57,24 +66,24 @@ func setupView() {
 
 	resultListLeft = widget.NewList(
 		func() int {
-			return len(result.findingsLeft)
+			return len(result.FindingsLeft)
 		},
 		func() fyne.CanvasObject {
 			return widget.NewLabel("template")
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
-			o.(*widget.Label).SetText(result.findingsLeft[i].content + " (" + strconv.Itoa(result.findingsLeft[i].index) + ")")
+			o.(*widget.Label).SetText(processResult(result.FindingsLeft[i]))
 		})
 
 	resultListRight = widget.NewList(
 		func() int {
-			return len(result.findingsRight)
+			return len(result.FindingsRight)
 		},
 		func() fyne.CanvasObject {
 			return widget.NewLabel("template")
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
-			o.(*widget.Label).SetText(result.findingsRight[i].content + " (" + strconv.Itoa(result.findingsRight[i].index) + ")")
+			o.(*widget.Label).SetText(processResult(result.FindingsRight[i]))
 		})
 
 	separatorAutodetectLeft = widget.NewCheck("Detect separator", func(bool) {
@@ -92,7 +101,7 @@ func setupView() {
 	ignoreTimestamps.SetChecked(false)
 	ignoreTimestamps.Disable()
 
-	trim = widget.NewCheck("Trim token values", func(v bool) {
+	trim = widget.NewCheck("Trim Token values", func(v bool) {
 		analyze()
 	})
 	trim.SetChecked(true)
@@ -134,7 +143,7 @@ func setupView() {
 
 	findingsContainer := container.New(layout.NewGridLayout(2), resultListLeft, resultListRight)
 
-	w.Resize(fyne.NewSize(600, 850))
+	w.Resize(fyne.NewSize(1000, 1400))
 	mainContainer := container.NewVBox()
 	mainContainer.Add(newGrid)
 	mainContainer.Add(generalOptionsContainer)
